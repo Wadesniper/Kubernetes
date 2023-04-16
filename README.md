@@ -61,11 +61,11 @@ L'outil kubectl installé sur votre machine
 
 4- Créez un namespace pour notre application WordPress :
 
-kubectl apply -f app-wordpress-namespace.yml
+`kubectl apply -f app-wordpress-namespace.yml`
 
 5- Créez un secret Kubernetes pour stocker le mot de passe de la base de données MySQL :
 
-``kubectl apply -f app-wordpress-secret.yml``
+`kubectl apply -f app-wordpress-secret.yml`
 
 6- Créez un déploiement Kubernetes pour la base de données MySQL :
 

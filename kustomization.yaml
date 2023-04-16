@@ -1,0 +1,7 @@
+resources:                      # spécifie les fichiers YAML qui définissent les ressources Kubernetes
+  - app-wordpress-namespace.yml # fichier YAML pour le namespace
+  - mysql-deployment.yml        # fichier YAML pour le déploiement MySQL
+  - wordpress-deployment.yml    # fichier YAML pour le déploiement WordPress
+  - app-wordpress-secret.yml    # fichier YAML pour les secrets de l'application
+  - service-nodeport-wordpress.yml  # fichier YAML pour le service de type NodePort pour WordPress
+  - service-clusterip-mysql.yml     # fichier YAML pour le service de type ClusterIP pour MySQL

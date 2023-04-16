@@ -1,0 +1,17 @@
+# manifest pour créer un service de type ClusterIP pour exposer l'application en interne
+apiVersion: v1                           # version de l'API Kubernetes utilisée dans ce manifest
+kind: Service                            # type de ressource Kubernetes que nous voulons créer (dans ce cas, un service)
+metadata:                                # métadonnées pour cette ressource (dans ce cas, le service)
+  name: wp-mysql                         # nom du service que nous voulons créer
+  labels:                                # étiquettes qui peuvent être utilisées pour rechercher ce service
+    name: wordpress
+  namespace: wordpress                   # espace de noms Kubernetes dans lequel nous créons ce service
+spec:                                    # spécifications pour ce service
+  type: ClusterIP                        # type de service Kubernetes (dans ce cas, ClusterIP)
+  selector:                              # sélecteur qui sera utilisé pour trouver les pods pour ce service
+    app: wordpress
+    tier: mysql
+  ports:                                 # ports exposés par ce service
+    - protocol: TCP                      # protocole de transport utilisé pour les données
+      port: 3306                         # port exposé par le service
+      targetPort: 3306                   # port cible sur les pods associés à ce service

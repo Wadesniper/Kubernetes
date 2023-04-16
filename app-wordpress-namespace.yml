@@ -1,0 +1,7 @@
+# manifest pour créer un namespace Kubernetes pour l'application WordPress
+apiVersion: v1                          # version de l'API Kubernetes utilisée dans ce manifest
+kind: Namespace                         # type de ressource Kubernetes que nous voulons créer (dans ce cas, un espace de noms)
+metadata:                               # métadonnées pour cette ressource (dans ce cas, l'espace de noms)
+  name: wordpress                       # nom du namespace que nous voulons créer
+status:                                 # statut du namespace que nous créons
+  phase: Active                         # l'état du namespace que nous créons (actif dans ce cas)

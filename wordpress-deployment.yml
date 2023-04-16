@@ -1,0 +1,47 @@
+# manifest pour le déploiement d'une instance de WordPress sur Kubernetes
+apiVersion: apps/v1                       # version de l'API Kubernetes utilisée dans ce manifest
+kind: Deployment                           # type de ressource Kubernetes que nous voulons créer (dans ce cas, un déploiement)
+metadata:                                  # métadonnées pour cette ressource (dans ce cas, le déploiement)
+  name: wordpress                          # nom du déploiement que nous voulons créer
+  labels:                                  # étiquettes qui peuvent être utilisées pour rechercher ce déploiement
+    app: wordpress
+  namespace: wordpress                     # espace de noms Kubernetes dans lequel nous créons ce déploiement
+spec:                                      # spécifications pour ce déploiement
+  replicas: 1                              # nombre de répliques de ce déploiement que nous voulons exécuter
+  selector:                                # sélecteur qui sera utilisé pour trouver les pods pour ce déploiement
+    matchLabels:
+      app: wordpress
+      tier: frontend
+  strategy:                                # stratégie de mise à jour pour ce déploiement
+    type: Recreate                         # recréer les pods à chaque fois qu'une mise à jour est effectuée
+  template:                                # modèle pour les pods associés à ce déploiement
+    metadata:
+      labels:
+        app: wordpress
+        tier: frontend
+    spec:
+      containers:                          # conteneurs pour les pods associés à ce déploiement
+      - image: wordpress:latest            # image Docker utilisée pour le conteneur
+        name: wordpress                    # nom du conteneur
+        env:                               # variables d'environnement pour le conteneur
+        - name: WORDPRESS_DB_USER          # nom de l'utilisateur de la base de données WordPress
+          value: toto
+        - name: WORDPRESS_DB_NAME          # nom de la base de données WordPress
+          value: wordpress
+        - name: WORDPRESS_DB_HOST          # nom du service Kubernetes pour la base de données MySQL
+          value: wp-mysql
+        - name: WORDPRESS_DB_PASSWORD      # mot de passe de la base de données WordPress
+          valueFrom:
+            secretKeyRef:
+              name: app-wordpress-secret
+              key: wordpress_db_password
+        ports:                             # ports exposés par ce conteneur
+        - containerPort: 80                 # port utilisé pour accéder à l'interface WordPress
+          name: wordpress
+        volumeMounts:                      # points de montage pour les volumes dans ce conteneur
+        - name: wp-persistent-storage      # nom du volume
+          mountPath: /var/www/html         # chemin de montage pour le volume
+      volumes:                             # volumes à utiliser dans ce pod
+      - name: wp-persistent-storage        # nom du volume
+        hostPath:
+          path: /data/wordpress            # chemin d'accès pour le volume

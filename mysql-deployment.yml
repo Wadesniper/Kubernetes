@@ -1,0 +1,50 @@
+# manifest pour le déploiement de la BDD MySql
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: wp-mysql                # nom du déploiement
+  labels:
+    app: wordpress             # label pour identifier l'application
+  namespace: wordpress         # espace de noms Kubernetes
+spec:
+  replicas: 1                  # nombre de répliques de conteneurs MySQL
+  selector:
+    matchLabels: 
+      app: wordpress           # label pour identifier l'application
+      tier: mysql              # label pour identifier la couche de service
+  strategy:
+    type: Recreate             # stratégie de déploiement
+  template:
+    metadata:
+      labels:
+        app: wordpress         # label pour identifier l'application
+        tier: mysql            # label pour identifier la couche de service
+    spec:
+      containers:
+      - image: mysql:5.7       # image Docker pour le conteneur MySQL
+        name: mysql            # nom du conteneur MySQL
+        env:
+        - name: MYSQL_DATABASE # nom de la base de données MySQL
+          value: wordpress
+        - name: MYSQL_USER     # nom d'utilisateur MySQL
+          value: toto
+        - name: MYSQL_PASSWORD # mot de passe MySQL récupéré à partir d'un secret Kubernetes
+          valueFrom:
+            secretKeyRef:
+              name: app-wordpress-secret
+              key: mysql_password
+        - name: MYSQL_RANDOM_ROOT_PASSWORD  # mot de passe aléatoire de l'utilisateur root MySQL
+          valueFrom:
+            secretKeyRef:
+              name: app-wordpress-secret
+              key: mysql_random_root_password
+        ports:
+        - containerPort: 3306   # port exposé par le conteneur MySQL
+          name: mysql
+        volumeMounts:
+        - name: mysql-persistent-storage  # nom du volume monté pour stocker les données MySQL
+          mountPath: /var/lib/mysql
+      volumes:
+      - name: mysql-persistent-storage   # nom du volume persistant pour les données MySQL
+        hostPath:
+          path: /data/mysql
